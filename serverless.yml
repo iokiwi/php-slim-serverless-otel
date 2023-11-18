@@ -1,0 +1,23 @@
+service: app
+
+provider:
+    name: aws
+    region: ap-southeast-2
+
+plugins:
+    - ./vendor/bref/bref
+
+functions:
+  api:
+    handler: public/index.php
+    description: ''
+    runtime: php-81-fpm
+    timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+    events:
+     - httpApi: '*'
+
+# Exclude files from deployment
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!tests/**'
