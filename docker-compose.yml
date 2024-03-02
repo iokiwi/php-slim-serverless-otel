@@ -1,18 +1,57 @@
 version: '3.7'
 
 volumes:
-    logs:
-        driver: local
+  logs:
+    driver: local
 
 services:
-    slim:
-        image: php:7-alpine
-        working_dir: /var/www
-        command: php -S 0.0.0.0:8080 -t public
-        environment:
-            docker: "true"
-        ports:
-            - "8080:8080"
-        volumes:
-            - .:/var/www
-            - logs:/var/www/logs
+  web_1:
+    build: .
+    working_dir: /var/www
+    command: php -S 0.0.0.0:8080 -t public
+    environment:
+      docker: "true"
+      OTEL_PHP_AUTOLOAD_ENABLED: "true"
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+      COLOR: "red"
+      NAME: "Web 1"
+      LINK: "http://localhost:8081"
+    ports:
+     - "8080:8080"
+    volumes:
+     - .:/var/www
+     - logs:/var/www/logs
+
+  web_2:
+    build: .
+    working_dir: /var/www
+    command: php -S 0.0.0.0:8080 -t public
+    environment:
+      docker: "true"
+      OTEL_PHP_AUTOLOAD_ENABLED: "true"
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+      COLOR: "teal"
+      NAME: "Web 2"
+      LINK: "http://localhost:8080"
+    ports:
+     - "8081:8080"
+    volumes:
+     - .:/var/www
+     - logs:/var/www/logs
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.86.0
+    volumes:
+     - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command: ["--config=/etc/otel-collector-config.yaml"]
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.49
+    ports:
+     - "16686:16686"

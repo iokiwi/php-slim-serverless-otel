@@ -16,7 +16,25 @@ return function (App $app) {
     });
 
     $app->get('/', function (Request $request, Response $response) {
-        $response->getBody()->write('Hello world!');
+
+        $name = getenv("NAME");
+        $link = getenv("LINK");
+        $color = getenv("COLOR");
+
+        echo "<h1 style=\"color: ". $color . "\">" . $name . "</h1>";
+        echo "<a href=\"" . $link . "\">Go to " . $link .  "</a><br><br>";
+        echo "Jaeger: <a target=\"_blank\" href=\"http://localhost:16686\">http://localhost:16686</a><br><br>";
+
+        $extensions = get_loaded_extensions();
+
+        // Loop through the extensions and print each one
+        echo "Loaded extensions are: <ul>";
+        foreach ($extensions as $extension) {
+            echo "<li>" . $extension . "</li>";
+        }
+        echo "</ul>";
+
+        $response->getBody()->write("");
         return $response;
     });
 

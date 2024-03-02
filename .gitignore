@@ -2,7 +2,9 @@
 .vscode/
 /coverage/
 /vendor/
+node_modules/
 /logs/*
 !/logs/README.md
 .phpunit.result.cache
 .serverless/
+otel-collector-config.yaml
