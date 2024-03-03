@@ -5,7 +5,7 @@ volumes:
     driver: local
 
 services:
-  web_1:
+  web1:
     build: .
     working_dir: /var/www
     command: php -S 0.0.0.0:8080 -t public
@@ -18,14 +18,16 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
       COLOR: "red"
       NAME: "Web 1"
+      LINK_INTERNAL: "http://web2:8080"
       LINK: "http://localhost:8081"
+      OTLE_SERVICE_NAME: "Web 1"
     ports:
      - "8080:8080"
     volumes:
      - .:/var/www
      - logs:/var/www/logs
 
-  web_2:
+  web2:
     build: .
     working_dir: /var/www
     command: php -S 0.0.0.0:8080 -t public
@@ -36,8 +38,10 @@ services:
       OTEL_METRICS_EXPORTER: otlp
       OTEL_LOGS_EXPORTER: otlp
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+      OTLE_SERVICE_NAME: "Web 2"
       COLOR: "teal"
       NAME: "Web 2"
+      LINK_INTERNAL: "http://web1:8080"
       LINK: "http://localhost:8080"
     ports:
      - "8081:8080"
